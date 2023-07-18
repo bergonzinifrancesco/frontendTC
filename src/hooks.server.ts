@@ -1,6 +1,5 @@
-import { redirect } from '@sveltejs/kit';
-import { serverURL } from '$lib/api.ts';
-import axios from 'axios';
+import { customPost } from '$lib/server/api';
+import { error } from '@sveltejs/kit';
 import * as jose from 'jose';
 
 export async function handle({event, resolve}) {
@@ -19,16 +18,22 @@ export async function handle({event, resolve}) {
     }
     catch(error) {
         console.log("refresh del token da hook...");
-        axios.post(serverURL + '/token/refresh',{refresh: refresh})
-        .then( function (response) {
-            event.locals.access = response.data.access;
-            event.locals.refresh = response.data.refresh;
-        })
-        .catch( function () {
-            event.locals.access = null;
-            event.locals.refresh = null;
-            event.locals.username = null;
-        });
+        if(refresh) {
+            customPost('/token/refresh',{refresh: refresh}, refresh)
+            .then( function (response) {
+                event.locals.access = response.data.access;
+                event.locals.refresh = response.data.refresh;
+            })
+            .catch( function () {
+                event.locals.access = null;
+                event.locals.refresh = null;
+                event.locals.username = null;
+            });
+        }
+        else {
+            console.log("Il token di refresh non esiste.");
+            throw error(500, "Il token di refresh è stato manomesso.");
+        }
     }
 
     const response = await resolve(event);

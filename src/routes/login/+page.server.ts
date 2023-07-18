@@ -1,8 +1,7 @@
 import {redirect} from '@sveltejs/kit';
 import { fail } from '@sveltejs/kit';
-import * as jose from 'jose';
-import { serverURL } from '$lib/api.ts';
-import axios, { AxiosError } from 'axios';
+import { customPost } from '$lib/server/api';
+import type { AxiosError } from 'axios';
 
 export function load({cookies, url, locals}) {
     if(locals.username && locals.access) {
@@ -11,18 +10,18 @@ export function load({cookies, url, locals}) {
 }
 
 export const actions = {
-    login: async function ({cookies, url, request}) {
+    login: async function ({cookies, url, request, locals}) {
         
         const data = await request.formData();
         const username = data.get('username');
         const password = data.get('password');
         
         try {
-            const response = await axios.post(serverURL + "/token/pair", 
+            const response = await customPost("/token/pair", 
             {
                 username: username,
                 password: password
-            });
+            }, locals.access);
 
             const {access, refresh} = response.data;
 
