@@ -9,13 +9,12 @@ export async function handle({event, resolve}) {
     const access = event.cookies.get('access');
     const refresh = event.cookies.get('refresh');
 
-    event.locals.username = username ?? null;
-
     try {
         if(access) {
             jose.decodeJwt(access);
-            event.locals.access = access ?? null;
-            event.locals.refresh = refresh ?? null;
+            event.locals.access = access;
+            event.locals.refresh = refresh;
+            event.locals.username = username;
         }
     }
     catch(error) {
@@ -28,6 +27,7 @@ export async function handle({event, resolve}) {
         .catch( function () {
             event.locals.access = null;
             event.locals.refresh = null;
+            event.locals.username = null;
         });
     }
 

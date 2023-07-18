@@ -8,6 +8,11 @@
 
 	import {AppShell, AppBar, Avatar} from '@skeletonlabs/skeleton';
 	import {redirect} from '@sveltejs/kit';
+	import { resize_observer_border_box } from 'svelte/internal';
+
+	export let data;
+	$: avatarBorder = "border-2 border-surface-900-50-token" + (data?.isLogged ? " hover:!border-primary-500" : "");
+
 </script>
 
 <AppShell>
@@ -16,18 +21,24 @@
 			<svelte:fragment slot='lead'>N</svelte:fragment>
 				<a href='/'>Sito calcetto</a>
 			<svelte:fragment slot='trail'>
+				{#if data?.isLogged}
+				<a href='/logout'>
+					Log Out
+				</a>
+				{:else}
 				<a href='/login'>
 					Log In
 				</a>
 				<a href='/signup'>
 					Sign Up
 				</a>
+				{/if}
 				<a href='/about'>
 					<Avatar
 						src="/account.png"
-						border='border-4 border-surface-300-600-token hover:!border-primary-500'
+						bind:border={avatarBorder}
 						cursor="cursor-pointer"
-						background="bg-secondary-500"
+						background="bg-secondary-300"
 					/>
 				</a>
 			</svelte:fragment>

@@ -24,13 +24,11 @@ export const actions = {
                 password: password
             });
 
-            const {user, access, refresh} = response.data;
+            const {access, refresh} = response.data;
 
-            cookies.set('username', user, {path: '/'});
+            cookies.set('username', response.data.username, {path: '/'});
             cookies.set('access', access, {path: '/'});
             cookies.set('refresh', refresh, {path: '/'});
-
-            throw redirect(307, url.searchParams.get('redirectTo') ?? '/');
         }
         catch (error : AxiosError) {
             if(error.response) {
@@ -43,6 +41,6 @@ export const actions = {
                 return fail(400, {message: error.message});
             }
         }
-
+        throw redirect(307, url.searchParams.get('redirectTo') ?? '/');
     }
 }
