@@ -4,7 +4,21 @@
 	// If you have source.organizeImports set to true in VSCode, then it will auto change this ordering
 	import '@skeletonlabs/skeleton/styles/skeleton.css';
 	// Most of your app wide CSS should be put in this file
-	import '../app.postcss';
+	import '../app.postcss';	
+
+	import {AppShell, AppBar, Avatar} from '@skeletonlabs/skeleton';
 </script>
 
-<slot />
+<AppShell>
+	<svelte:fragment slot="header">
+		<AppBar gridColumns="grid-cols-3" slotDefault='place-self-center' slotTrail='place-content-end'>
+			<svelte:fragment slot='lead'>N</svelte:fragment>
+			Sito calcetto
+			<svelte:fragment slot='trail'>
+				<Avatar src="https://www.flaticon.com/free-icons/user">
+				</Avatar>
+			</svelte:fragment>
+		</AppBar>
+	</svelte:fragment>
+	<slot />
+</AppShell>

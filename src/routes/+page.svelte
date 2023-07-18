@@ -1,10 +1,1 @@
-<div>
-	<form method="post" action="?/register">
-		<label>
-			<input
-				name="username"
-				autocomplete="off"
-			/>
-		</label>
-	</form>
-</div>
+<h1>Niente da vedere, per ora</h1>
