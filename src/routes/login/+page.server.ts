@@ -1,9 +1,9 @@
 import {redirect} from '@sveltejs/kit';
 import { fail } from '@sveltejs/kit';
-import { customPost } from '$lib/server/api';
-import type { AxiosError } from 'axios';
+import axios from 'axios';
+import { serverURL } from '$lib/server/api.ts';
 
-export function load({cookies, url, locals}) {
+export function load({url, locals}) {
     if(locals.username && locals.access) {
         throw redirect(307, url.searchParams.get('redirectTo') ?? '/');
     }
@@ -17,7 +17,7 @@ export const actions = {
         const password = data.get('password');
         
         try {
-            const response = await customPost("/token/pair", 
+            const response = await axios.post(serverURL + "/token/pair", 
             {
                 username: username,
                 password: password

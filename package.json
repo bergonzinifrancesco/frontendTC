@@ -37,6 +37,8 @@
 	"type": "module",
 	"dependencies": {
 		"axios": "^1.4.0",
-		"jose": "^4.14.4"
+		"irc": "^0.5.2",
+		"jose": "^4.14.4",
+		"ws": "^8.13.0"
 	}
 }
