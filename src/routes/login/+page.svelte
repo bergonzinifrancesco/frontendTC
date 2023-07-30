@@ -3,7 +3,6 @@
 	import { focusTrap } from "@skeletonlabs/skeleton";
 	import { fade } from "svelte/transition";
     export let form;
-    $: console.log(form);
 </script>
 
 <div class="h-full flex flex-col items-center justify-center">
@@ -38,10 +37,10 @@
         </form>
     </div>
     {#if form?.incorrect}
-    <div class="alert variant-filled-error" transition:fade|local={{duration: 200}}>
-        <div class="alert-message">
-            <p>Credenziali errate, riprova</p>
-        </div> 
-    </div>
+        <div class="alert variant-filled-error" transition:fade|local={{duration: 200}}>
+            <div class="alert-message">
+                <p>Credenziali errate, riprova</p>
+            </div> 
+        </div>
     {/if}
 </div>

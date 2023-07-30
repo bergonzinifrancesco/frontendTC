@@ -6,27 +6,14 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';	
 
-	import {AppShell, AppBar, Avatar, modalStore, type ModalSettings, Modal} from '@skeletonlabs/skeleton';
+	import {AppShell, AppBar, Avatar} from '@skeletonlabs/skeleton';
 	export let data;
 
 	$: isLogged = data?.isLogged;
-
-	const modals:ModalSettings = {
-		type: 'confirm',
-		title: 'Log Out',
-		body: 'Vuoi davvero uscire?',
-		response: async (r:boolean) => {
-			const response = await fetch('/', {
-				method: 'delete'
-			});
-			isLogged = await response.json();
-		}
-	};
+	$: avatarPath = data?.avatarPath;
 
 	$: avatarBorder = "border-2 border-surface-900-50-token" + (isLogged ? " hover:!border-primary-500" : "");
 </script>
-
-<Modal />
 
 <AppShell>
 	<svelte:fragment slot="header">
@@ -35,20 +22,22 @@
 				<a href='/' class="h1">Sito calcetto</a>
 			<svelte:fragment slot='trail'>
 				{#if isLogged}
-				<button on:click={() => modalStore.trigger(modals)} class="h3">
-					Log Out
-				</button>
+					<form method="post" action="/login?/logout">
+						<button type="submit" class='h3'>
+							Log Out
+						</button>
+					</form>
 				{:else}
-				<a href='/login' class="h3">
-					Log In
-				</a>
-				<a href='/signup' class="h3">
-					Sign Up
-				</a>
+					<a href='/login' class="h3">
+						Log In
+					</a>
+					<a href='/signup' class="h3">
+						Sign Up
+					</a>
 				{/if}
 				<a href='/about'>
 					<Avatar
-						src="/user-solid.svg"
+						src={isLogged ? avatarPath : '/user-solid.svg'}
 						width="w-12"
 						bind:border={avatarBorder}
 						cursor="cursor-pointer"

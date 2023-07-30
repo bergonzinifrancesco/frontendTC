@@ -1,7 +1,7 @@
 import {redirect} from '@sveltejs/kit';
 import { fail } from '@sveltejs/kit';
-import axios from 'axios';
-import { serverURL } from '$lib/server/api.ts';
+import axios, { AxiosError } from 'axios';
+import { serverURL } from '$lib/server/api';
 
 export function load({url, locals}) {
     if(locals.username && locals.access) {
@@ -17,7 +17,7 @@ export const actions = {
         const password = data.get('password');
         
         try {
-            const response = await axios.post(serverURL + "/token/pair", 
+            const response = await axios.post(serverURL + "/api/token/pair", 
             {
                 username: username,
                 password: password
@@ -41,5 +41,16 @@ export const actions = {
             }
         }
         throw redirect(307, url.searchParams.get('redirectTo') ?? '/');
+    },
+    logout: function({cookies, locals, request}) {
+        cookies.delete('username', {path: '/'});
+        cookies.delete('access', {path: '/'});
+        cookies.delete('refresh', {path: '/'});
+
+        locals.username = null;
+        locals.access = null;
+        locals.refresh = null;
+
+        throw redirect(302, '/');
     }
 }

@@ -20,7 +20,7 @@ export const actions = {
         }
 
         try {
-            const response = await axios.post(serverURL + "/auth/register", 
+            const response = await axios.post(serverURL + "/api/auth/register", 
             formData, locals.access);
 
             const {access, refresh} = response.data;

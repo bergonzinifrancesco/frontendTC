@@ -1,5 +1,6 @@
-import { customPost } from '$lib/server/api';
-import { error } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
+import axios from 'axios';
+import { serverURL } from '$lib/server/api';
 import * as jose from 'jose';
 
 export async function handle({event, resolve}) {
@@ -8,31 +9,40 @@ export async function handle({event, resolve}) {
     const access = event.cookies.get('access');
     const refresh = event.cookies.get('refresh');
 
+    console.log("Sono nell'hook.");
+
     try {
-        if(access) {
-            jose.decodeJwt(access);
-            event.locals.access = access;
-            event.locals.refresh = refresh;
-            event.locals.username = username;
-        }
+        const payload = jose.decodeJwt(access);
+        if(payload.exp*1000 <= Date.now())
+            throw new Error('token scaduto.');
+        event.locals.access = access;
+        event.locals.refresh = refresh;
+        event.locals.username = username;
+        console.log("Token validi.");
     }
     catch(error) {
         console.log("refresh del token da hook...");
         if(refresh) {
-            customPost('/token/refresh',{refresh: refresh}, refresh)
-            .then( function (response) {
+            await axios.post(serverURL + '/api/token/refresh',refresh)
+            .then(function (response) {
+                event.cookies.set('access', response.data.access, {path: '/'});
+                event.cookies.set('refresh', response.data.refresh, {path: '/'});
                 event.locals.access = response.data.access;
                 event.locals.refresh = response.data.refresh;
+                console.log("refresh ok, si aggiornano i token.");
             })
-            .catch( function () {
+            .catch(() => {
+                event.cookies.delete('access', {path: '/'});
+                event.cookies.delete('refresh', {path: '/'});
+                event.cookies.delete('username', {path: '/'});
                 event.locals.access = null;
                 event.locals.refresh = null;
                 event.locals.username = null;
+                console.log("refresh fallito, si cancellano i cookie.");
             });
         }
         else {
             console.log("Il token di refresh non esiste.");
-            throw error(500, "Il token di refresh è stato manomesso.");
         }
     }
 
