@@ -4,40 +4,37 @@
     import { fade } from 'svelte/transition';
 
     const opzioni : Object = {
-        POR: 'Portiere',
-        DIF: 'Difensore',
-        DIF_TER: 'Terzino',
-        CEN: 'Centrocampista',
-        CEN_ALA: 'Ala',
-        CEN_TRQ: 'Trequartista',
-        ATT: 'Attaccante',
-        QLS: 'Qualsiasi'
+        veloce: "Veloce",
+        agile: "Agile",
+        tecnico: "Tecnico",
+        fisico: "Fisico",
+        tattico: "Tattico",
+        acrobata: "Acrobata"
     };
 
-    export let positions : string[];
+    export let characteristics : string[];
     export let error : string;
     export let success : boolean | undefined;
 </script>
 
 <div class="card w-3/4 mx-auto">
     <header class="card-header p-4">
-        <h3 class="h3">Posizioni in campo</h3>
+        <h3 class="h3">Caratteristiche di gioco</h3>
         <p>Selezionane esattamente 3.</p>
-        <p>Seleziona "Qualsiasi" se non vuoi indicare due alternative.</p>
     </header>
     <section class="p-4">
-        <form id="posizioni" method="post" action="?/uploadPositions" use:enhance>
-            <input name="positions" type="text" multiple bind:value={positions} hidden/>
+        <form id="caratteristiche" method="post" action="?/uploadCharacteristics" use:enhance>
+            <input name="characteristics" type="text" multiple bind:value={characteristics} hidden/>
         </form>
         <ListBox multiple>
             {#each Object.entries(opzioni) as opzione}
-                <ListBoxItem bind:group={positions} name="opzione" value={opzione[0]}>{opzione[1]}</ListBoxItem>
+                <ListBoxItem bind:group={characteristics} name="opzione" value={opzione[0]}>{opzione[1]}</ListBoxItem>
             {/each} 
         </ListBox>
     </section>
     <footer class="p-4">
-        <button type="submit" class="btn variant-filled-primary w-full" form="posizioni">
-            <h3 class="h3">Conferma modifica posizioni</h3>
+        <button type="submit" class="btn variant-filled-primary w-full" form="caratteristiche">
+            <h3 class="h3">Conferma modifica caratteristiche</h3>
         </button>
         {#if error}
             <div class="alert variant-filled-error" in:fade|once={{delay: 200, duration: 500}}>

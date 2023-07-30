@@ -3,8 +3,9 @@ import { serverURL } from '$lib/server/api';
 import { fail } from '@sveltejs/kit';
 
 export async function load({locals}) {
-    let avatarPath = null;
-    let positions = null;
+    let avatarPath = "";
+    const positions : string[] = [];
+    const characteristics : string[] = [];
 
     try {
         const avatar = await axios.get(serverURL  + '/api/user/me/avatar/',{
@@ -25,13 +26,10 @@ export async function load({locals}) {
             }
         });
 
-        let tmp = response.data;
-
-        positions = [
-            tmp.preferita,
-        ];
+        const tmp = response.data;
 
         try {
+            positions.push(tmp.preferita);
             positions.push(tmp.alternativa);
             positions.push(tmp.alternativa2);
         }
@@ -43,9 +41,32 @@ export async function load({locals}) {
         console.log("Posizioni non presenti.");
     }
 
+    try {
+        const response = await axios.get(serverURL + '/api/user/me/caratteristiche/', {
+            headers: {
+                Authorization: `Bearer ${locals.access}`
+            }
+        });
+
+        const tmp = response.data;
+
+        try {
+            characteristics.push(tmp.principale);
+            characteristics.push(tmp.secondaria);
+            characteristics.push(tmp.terziaria);
+        }
+        catch(error) {
+            console.log("Non tutte le caratteristiche sono specificate.");
+        }
+    }
+    catch(error) {
+        console.log("Caratteristiche non presenti.");
+    }
+
     return {
         avatar: avatarPath,
-        positions: positions
+        positions: positions,
+        characteristics: characteristics
     };
 }
 
@@ -87,12 +108,11 @@ export const actions = {
     uploadPositions: async function({request, locals}) {
 
         const data = await request.formData();
-        console.log("data", data);
 
         const tmp : string[] = data.get('positions').split(',');
 
-        if(tmp.length > 3) {
-            return {positionError: "Non puoi selezionare più di 3 posizioni."}
+        if(tmp.length !== 3) {
+            return {positionError: "Devi selezionare 3 posizioni."}
         }
 
         const positions : Object = {
@@ -118,6 +138,39 @@ export const actions = {
         }
         catch(error) {
             return {positionError: error.message};
+        }
+    },
+    uploadCharacteristics: async function({request, locals}) {
+        const data = await request.formData();
+
+        const tmp : string[] = data.get('characteristics').split(',');
+
+        if(tmp.length !== 3) {
+            return {characteristicError: "Devi selezionare 3 caratteristiche."}
+        }
+
+        const characteristics = {
+            principale : tmp[0],
+            secondaria : tmp[1],
+            terziaria : tmp[2]
+        };
+
+        console.log(characteristics);
+
+        try {
+            await axios.put(
+                serverURL + "/api/user/me/caratteristiche/",
+                characteristics,
+                {
+                    headers: {
+                        Authorization: `Bearer ${locals.access}`
+                    }
+                }
+            );
+            return {characteristicSuccess: true};
+        }
+        catch(error) {
+            return {characteristicError: error.message};
         }
     }
 }
