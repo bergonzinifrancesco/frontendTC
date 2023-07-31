@@ -111,18 +111,23 @@ export const actions = {
 
         const tmp : string[] = data.get('positions').split(',');
 
-        if(tmp.length !== 3) {
-            return {positionError: "Devi selezionare 3 posizioni."}
+        if(tmp.length < 1) {
+            return {positionError: "Seleziona almeno 1 posizione."};
+        }
+        if(tmp.length > 3) {
+            return {positionError: "Puoi selezionare max. 3 posizioni."};
         }
 
-        const positions : Object = {
-            preferita : tmp[0],
+        const positions = {
+            preferita : tmp[0]
         };
     
-        positions.alternativa = tmp[1] ? tmp[1] : "QLS";
-        positions.alternativa2 = tmp[2] ? tmp[2] : "QLS";
-
-        console.log("positions", positions);
+        if(tmp[1]) {
+            positions.alternativa = tmp[1];
+        }
+        if(tmp[2]) {
+            positions.alternativa2 = tmp[2];
+        }
 
         try {
             await axios.put(
@@ -143,19 +148,33 @@ export const actions = {
     uploadCharacteristics: async function({request, locals}) {
         const data = await request.formData();
 
-        const tmp : string[] = data.get('characteristics').split(',');
+        console.log("characteristics", data.get('characteristics'));
 
-        if(tmp.length !== 3) {
-            return {characteristicError: "Devi selezionare 3 caratteristiche."}
+        let tmp : string[] = data.get('characteristics').split(',');
+
+        // rimozione delle stringhe vuote
+        tmp = tmp.filter(
+            (value, index, arr) => {
+                return value;
+        });
+
+        if(tmp.length < 1) {
+            return {characteristicError: "Seleziona almeno 1 caratteristica."};
+        }
+        if(tmp.length > 3) {
+            return {characteristicError: "Puoi selezionare max. 3 caratteristiche."};
         }
 
         const characteristics = {
-            principale : tmp[0],
-            secondaria : tmp[1],
-            terziaria : tmp[2]
-        };
+            principale : tmp[0]
+        }
 
-        console.log(characteristics);
+        if(tmp[1]) {
+            characteristics.secondaria = tmp[1];
+        }
+        if(tmp[2]) {
+            characteristics.terziaria = tmp[2];
+        }
 
         try {
             await axios.put(

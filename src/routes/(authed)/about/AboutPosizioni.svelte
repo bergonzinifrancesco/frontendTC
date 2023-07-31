@@ -36,7 +36,7 @@
         </ListBox>
     </section>
     <footer class="p-4">
-        <button type="submit" class="btn variant-filled-primary w-full" form="posizioni">
+        <button type="submit" class="btn variant-filled-primary w-full" form="posizioni" disabled={positions.length === 0}>
             <h3 class="h3">Conferma modifica posizioni</h3>
         </button>
         {#if error}
