@@ -172,5 +172,38 @@ export const actions = {
         catch(error) {
             return {characteristicError: error.message};
         }
+    },
+    changePassword: async function({request, locals}) {
+        const data = await request.formData();
+        
+        const password = data.get('password');
+        const confirmPassword = data.get('confirmPassword');
+
+        console.log(password, confirmPassword);
+
+        if(password !== confirmPassword) {
+            return {changePasswordError: "Le due password non sono uguali."};
+        }
+
+        try {
+            await axios.post(
+                serverURL + "/api/user/change_password/",
+                {password: password},
+                {
+                    headers: {
+                        Authorization: `Bearer ${locals.access}`
+                    }
+                }
+            );
+            return {changePasswordSuccess: true};
+        }
+        catch(error) {
+            if(error.response && error.response.status == 409) {
+                return {changePasswordError:"La password è uguale alla precedente"};
+            }
+            else {
+                console.log(error.message);
+            }
+        }
     }
 }

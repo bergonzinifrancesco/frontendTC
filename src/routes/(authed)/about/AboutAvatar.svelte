@@ -5,8 +5,8 @@
 
     export let avatarPath: string;
     export let fileSize: number;
-    export let error;
-    export let success;
+    export let error : string | undefined;
+    export let success : boolean | undefined;
     let files : FileList;
 </script>
 
