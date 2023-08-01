@@ -46,6 +46,10 @@ export async function handle({event, resolve}) {
         }
     }
 
+    const structures = event.cookies.get('structures');
+        
+    event.locals.structures = structures ? JSON.parse(structures) : null;
+
     const response = await resolve(event);
     return response;
 }

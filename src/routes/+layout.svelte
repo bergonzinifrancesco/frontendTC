@@ -6,19 +6,27 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';	
 
-	import {AppShell, AppBar, Avatar} from '@skeletonlabs/skeleton';
+	import {AppShell, AppBar, Avatar, AppRail, AppRailAnchor} from '@skeletonlabs/skeleton';
+	import { page } from '$app/stores';
+
 	export let data;
 
 	$: isLogged = data?.isLogged;
 	$: avatarPath = data?.avatarPath;
 
 	$: avatarBorder = "border-2 border-surface-900-50-token" + (isLogged ? " hover:!border-primary-500" : "");
+
+	let sidebarIsOpen : boolean = false;
 </script>
 
 <AppShell>
 	<svelte:fragment slot="header">
 		<AppBar gridColumns="grid-cols-3" slotDefault='place-self-center' slotTrail='place-content-end'>
-			<svelte:fragment slot='lead'>N</svelte:fragment>
+			<svelte:fragment slot='lead'>
+				<button class="btn-icon-sm" type="button" on:click={() => sidebarIsOpen = sidebarIsOpen ? false : true}>
+					<img src="bars-solid.svg" alt="hamburger"/>
+				</button>
+			</svelte:fragment>
 				<a href='/' class="h1">Sito calcetto</a>
 			<svelte:fragment slot='trail'>
 				{#if isLogged}
@@ -47,5 +55,19 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
+		<svelte:fragment slot="sidebarLeft">
+			{#if sidebarIsOpen}
+				<AppRail
+					width="w-48"
+					gap="gap-4"
+				>
+					<svelte:fragment slot="lead">
+						<h4 class="h4">Admin struttura</h4>
+						<AppRailAnchor href="/gestione-calendario" selected={$page.url.pathname === '/gestione-calendario'}>Gestione calendario</AppRailAnchor>
+						<AppRailAnchor href="/modifica-struttura" selected={$page.url.pathname === '/modifica-struttura'}>Modifica scheda struttura</AppRailAnchor>
+					</svelte:fragment>
+				</AppRail>
+			{/if}
+		</svelte:fragment>
 	<slot />
 </AppShell>

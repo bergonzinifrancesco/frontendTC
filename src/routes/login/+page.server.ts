@@ -46,7 +46,9 @@ export const actions = {
         cookies.delete('username', {path: '/'});
         cookies.delete('access', {path: '/'});
         cookies.delete('refresh', {path: '/'});
+        cookies.delete('structures', {path: '/'});
 
+        locals.structures = null;
         locals.username = null;
         locals.access = null;
         locals.refresh = null;
