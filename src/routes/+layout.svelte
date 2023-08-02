@@ -65,6 +65,8 @@
                     width="w-48"
                     gap="gap-4"
                 >
+                    <h4 class="h4">Chat</h4>
+                    <AppRailAnchor href="/chat">Entra in chat</AppRailAnchor>
                     <h4 class="h4">Admin struttura</h4>
                     <AppRailAnchor href="/gestione-calendario" selected={$page.url.pathname === '/gestione-calendario'}>Gestione calendario</AppRailAnchor>
                     <AppRailAnchor href="/modifica-struttura" selected={$page.url.pathname === '/modifica-struttura'}>Modifica scheda struttura</AppRailAnchor>

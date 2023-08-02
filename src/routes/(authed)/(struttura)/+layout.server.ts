@@ -5,7 +5,7 @@ import { redirect } from '@sveltejs/kit';
 export async function load({locals, cookies}) {
     try {
         const response = await axios.get(
-            serverURL + '/api/structure/get_structures/',
+            serverURL + '/api/structure/my_structures/',
                 {
                     headers: {
                         Authorization: `Bearer ${locals.access}`
