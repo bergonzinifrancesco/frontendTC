@@ -2,6 +2,7 @@ import axios from 'axios';
 import { serverURL } from '$lib/server/api';
 import { error } from '@sveltejs/kit';
 
+
 export async function load() {
   try {
     const response = await axios.get(serverURL + '/api/structure/list_structures/');    

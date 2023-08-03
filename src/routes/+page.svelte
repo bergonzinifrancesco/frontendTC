@@ -5,6 +5,8 @@
   export let data;
 </script>
 
-{#each data.structures as s}
-  <Structure id={s.id} {...s.structure}/>
-{/each}
+<div class="flex flex-col p-4 gap-4 items-center">
+  {#each data.structures as s}
+    <Structure id={s.id} {...s.structure}/>
+  {/each}
+</div>
