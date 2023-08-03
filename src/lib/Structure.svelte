@@ -17,15 +17,17 @@
     <LeafletMap lat={lat} long={long} />
   </div>
   
-  <div class="grid grid-rows-3 justify-start p-6">
+  <div class="grid grid-rows-3 justify-center md:justify-start p-6">
     <h4
-      class="h4 mb-2 w-full inline-block">
+      class="h4 mb-2 md:w-48 w-full">
       {nome}
     </h4>
-    <div class="grid grid-cols-2">
+    <div class="grid grid-cols-2 pt-4">
       <p class="text-xs text-left text-neutral-500 dark:text-neutral-300">
         {#if fondazione}
           Since {fondazione}
+        {:else}
+          Since 0000
         {/if}
       </p>
       <p class="text-xs text-right text-neutral-500 dark:text-neutral-300">
