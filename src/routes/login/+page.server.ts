@@ -40,9 +40,8 @@ export const actions = {
                 return fail(400, {message: error.message});
             }
         }
-        throw redirect(307, url.searchParams.get('redirectTo') ?? '/');
     },
-    logout: function({cookies, locals, request}) {
+    logout: function({cookies, locals}) {
         cookies.delete('username', {path: '/'});
         cookies.delete('access', {path: '/'});
         cookies.delete('refresh', {path: '/'});

@@ -33,12 +33,17 @@
       <p class="text-xs text-right text-neutral-500 dark:text-neutral-300">
         {#if dimensione}
           {dimensione} m<sup>2</sup>
+        {:else}
+          0000 m<sup>2</sup>
         {/if}
       </p>
     </div>
-    <button class="btn w-full inline-block variant-filled rounded-lg">
+    <a
+      class="btn w-full inline-block variant-filled rounded-lg"
+      href="/{id}/booking"
+    >
       Prenota un campo
-    </button>
+    </a>
   </div>
 
 </div>
