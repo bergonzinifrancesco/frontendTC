@@ -11,24 +11,32 @@
 
 </script>
 
-<div
-  class="flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 md:max-w-xl md:flex-row">
-  <div
-    class="h-96 w-full rounded-t-lg object-cover md:h-auto md:!rounded-none md:!rounded-l-lg"
-  >
-  <LeafletMap lat={lat} long={long} />
-</div>
-  <div class="flex flex-col justify-start p-6">
-    <h5
-      class="mb-2 text-xl font-medium text-neutral-800 dark:text-neutral-50">
-      Card title
-    </h5>
-    <p class="mb-4 text-base text-neutral-600 dark:text-neutral-200">
-      This is a wider card with supporting text below as a natural lead-in
-      to additional content. This content is a little bit longer.
-    </p>
-    <p class="text-xs text-neutral-500 dark:text-neutral-300">
-      Last updated 3 mins ago
-    </p>
+<div class="flex flex-col rounded-lg bg-white dark:bg-neutral-700 sm:w-3/4 sm:text-center md:max-w-xl md:flex-row md:h-60">
+  
+  <div class="h-96 w-full rounded-t-lg object-cover md:h-auto md:!rounded-none md:!rounded-l-lg">
+    <LeafletMap lat={lat} long={long} />
   </div>
+  
+  <div class="grid grid-rows-3 justify-start p-6">
+    <h4
+      class="h4 mb-2 w-full inline-block">
+      {nome}
+    </h4>
+    <div class="grid grid-cols-2">
+      <p class="text-xs text-left text-neutral-500 dark:text-neutral-300">
+        {#if fondazione}
+          Since {fondazione}
+        {/if}
+      </p>
+      <p class="text-xs text-right text-neutral-500 dark:text-neutral-300">
+        {#if dimensione}
+          {dimensione} m<sup>2</sup>
+        {/if}
+      </p>
+    </div>
+    <button class="btn w-full inline-block variant-filled rounded-lg">
+      Prenota un campo
+    </button>
+  </div>
+
 </div>
