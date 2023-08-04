@@ -38,4 +38,4 @@
   });
 </script>
 
-<div bind:this={mapElement} class="h-full w-full"/>
+<div bind:this={mapElement} class="w-full h-full"/>
