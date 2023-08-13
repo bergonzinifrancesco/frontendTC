@@ -5,16 +5,12 @@
 	import Interaction from '@event-calendar/interaction';
 
 	export let username;
-	export let uploadChanges;
 	export let bookings;
-
-	console.log('bookings', bookings);
+	export let newEvents;
 
 	let calendar;
-	let newEvents = [];
-
 	let plugins = [TimeGrid, Interaction];
-	let options = {
+	$: options = {
 		allDaySlot: false,
 		view: 'timeGridWeek',
 		headerToolbar: {
@@ -61,7 +57,12 @@
 			} else {
 				calendar.addEvent(event);
 				bookings.push(event);
-				newEvents.push(event);
+				bookings = [...bookings];
+				newEvents = [...newEvents, event];
+				console.log('nuovo evento aggiunto');
+				console.log('newEvents', newEvents);
+				console.log('bookings', bookings);
+				console.log('calendar', calendar);
 			}
 		},
 		eventResize: function (info) {
@@ -75,13 +76,14 @@
 				bookings.splice(oldEventIndex, 1, info.event);
 			}
 		},
-		eventStartEditable: true,
+		eventStartEditable: false,
 		firstDay: 1, // Lunedì
 		locale: 'it-IT',
 		events: bookings
 	};
 
 	function validateEvent(event, events) {
+		console.log('event', event);
 		const hourInMs = 1000 * 60 * 60;
 		const duration = event.end - event.start;
 
@@ -94,9 +96,7 @@
 			console.log('Evento su due giorni, non si può aggiungere.');
 			return false;
 		}
-		const sameDayEvents = events.filter((e) => {
-			e.start.getDay() == event.start.getDay();
-		});
+		const sameDayEvents = events.filter((e) => e.start.getDay() == event.start.getDay());
 		for (const e of sameDayEvents) {
 			if (
 				(event.start <= e.start && event.end > e.start) ||
@@ -127,6 +127,7 @@
 		calendar.removeEventById(lastEvent.id);
 		return true;
 	}
+	$: console.log('bookings', bookings);
 </script>
 
 <div class="flex container flex-col bg-white p-10">
@@ -137,12 +138,5 @@
 		on:click={() => deleteLastEvent()}
 	>
 		<h3 class="h3">Elimina ultimo evento aggiunto</h3>
-	</button>
-	<button
-		type="button"
-		class="btn variant-filled h-full mt-6"
-		on:click={() => uploadChanges(bookings, username)}
-	>
-		<h3 class="h3">Conferma modifiche</h3>
 	</button>
 </div>

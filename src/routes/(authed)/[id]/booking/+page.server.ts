@@ -1,37 +1,114 @@
-import { getBookingsForStructure, getStructureInfo } from '$lib/server/api';
+import { getBookingsForStructure, getStructureInfo, serverURL } from '$lib/server/api';
+import axios from 'axios';
 
 export async function load({ params, cookies, locals }) {
 	const structureId = Number(params.id);
 
 	let structureInfo = null;
 	let bookings = [];
+	let fields = [];
+	let myInfo = null;
 
 	try {
 		structureInfo = await getStructureInfo(structureId);
+	} catch (err) {
+		console.log(err);
+	}
+	try {
 		bookings = await getBookingsForStructure(structureId);
+	} catch (err) {
+		console.log(err);
+	}
+	try {
+		fields = (await axios.get(serverURL + `/api/structure/${structureId}/info_campi/`)).data;
+	} catch (err) {
+		console.log(err);
+	}
+	try {
+		myInfo = (
+			await axios.get(serverURL + '/api/user/me/info_base/', {
+				headers: {
+					Authorization: `Bearer ${locals.access}`
+				}
+			})
+		).data;
 	} catch (err) {
 		console.log(err);
 	}
 	return {
 		id: params.id,
+		myInfo: myInfo,
 		structure: structureInfo,
-		bookings: createEventsFromBookings(bookings, locals.username),
+		fields: fields,
+		bookings: createEventsFromBookings(bookings, myInfo),
 		username: cookies.get('username')
 	};
 }
 
-function createEventsFromBookings(bookings, username) {
+function createEventsFromBookings(bookings, myInfo) {
+	console.log('myInfo', myInfo);
 	const events = [];
 
+	if (!myInfo || !myInfo) {
+		return null;
+	}
+
 	for (const b of bookings) {
+		console.log('b', b);
+		const isMine = b.prenotante == myInfo.id;
 		events.push({
 			id: events.length,
-			title: username,
-			titleHTML: `<b>${username}</b>`,
+			title: isMine ? myInfo.username : 'Altro utente',
+			titleHTML: isMine ? `<b>${myInfo.username}</b>` : '<i>Altro utente<i>',
+			backgroundColor: isMine ? 'blue' : 'red',
 			start: new Date(b.inizio),
 			end: new Date(b.fine),
-			editable: false
+			editable: false,
+			num_campo: b.campo
 		});
 	}
 	return events;
 }
+
+export const actions = {
+	uploadChanges: async function ({ request, locals, params }) {
+		const data = await request.formData();
+		console.log('data', data);
+		let events = data.get('newEvents');
+		let field = JSON.parse(data.get('actualField'));
+
+		console.log('field', field);
+
+		if (!events) {
+			return { uploadChangesError: 'Non ci sono eventi nuovi da inserire.' };
+		}
+		events = JSON.parse(events);
+
+		for (const event of events) {
+			axios
+				.post(
+					serverURL + '/api/booking/create_booking/',
+					{
+						campo_id: field.num_campo,
+						inizio: event.start,
+						fine: event.end,
+						struttura: params.id
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${locals.access}`
+						}
+					}
+				)
+				.then((success) => {
+					console.log('Successo post evento', success);
+					return { uploadChangesSuccess: true };
+				})
+				.catch((error) => {
+					console.log('Errore invio prenotazione');
+					return { uploadChangesError: error.message };
+				});
+		}
+		return { uploadChangesError: 'Errore inatteso' };
+	}
+};
