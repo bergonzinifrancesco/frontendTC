@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Structure from '$lib/Structure.svelte';
-	import { toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+	import { toastStore } from '@skeletonlabs/skeleton';
 	export let data;
 	export let form;
 

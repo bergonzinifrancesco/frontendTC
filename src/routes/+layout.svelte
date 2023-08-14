@@ -71,7 +71,7 @@
 		{#if sidebarIsOpen}
 			<AppRail width="w-48" gap="gap-4">
 				<h4 class="h4">Chat</h4>
-				<AppRailAnchor href="/chat">Entra in chat</AppRailAnchor>
+				<AppRailAnchor href="http://localhost:9000" target="_blank">Entra in chat</AppRailAnchor>
 				<h4 class="h4">Admin struttura</h4>
 				<AppRailAnchor
 					href="/gestione-calendario"

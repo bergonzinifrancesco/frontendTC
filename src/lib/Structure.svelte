@@ -5,7 +5,7 @@
 
 	export let id: Number;
 	export let nome: string;
-	export let fondazione: Date;
+	export let fondazione: string;
 	export let lat: number;
 	export let long: number;
 	export let dimensione: Number;
@@ -19,6 +19,8 @@
 	function cambiaRating(event: CustomEvent<{ index: number }>): void {
 		if (isLogged) newRating = event.detail.index;
 	}
+
+	$: dataFondazione = fondazione ? new Date(fondazione) : null;
 </script>
 
 <div
@@ -29,15 +31,20 @@
 	>
 		<LeafletMap {lat} {long} />
 	</div>
-
 	<div class="grid grid-rows-2 justify-center p-6 md:justify-start">
-		<h4 class="h4 mb-2 md:w-48 w-full">
-			{nome}
-		</h4>
+		<div class="container flex flex-col">
+			<h4 class="h4 mb-2 md:w-48 w-full">
+				{nome}
+			</h4>
+			<div class="container grid grid-cols-2 grid-flow-row justify-items-center">
+				<i class="fa-solid fa-shower fa-xl justify-start" />
+				<i class={`fa-solid ${spogliatoi ? 'fa-check' : 'fa-xmark'}`} />
+			</div>
+		</div>
 		<div class="grid grid-cols-2 pt-4 w-full">
 			<p class="text-xs text-left text-neutral-500 dark:text-neutral-300">
 				{#if fondazione}
-					Since {fondazione}
+					Since {dataFondazione.getFullYear()}
 				{:else}
 					Since 0000
 				{/if}
