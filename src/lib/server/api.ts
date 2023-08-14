@@ -4,14 +4,19 @@ export const serverURL = 'http://localhost:8000';
 
 export async function loadStructures() {
 	const response = await axios.get(serverURL + '/api/structure/list_structures/');
-	const structures_ids = response.data;
+	const structuresIds = response.data;
 
 	const structures = [];
 
-	for (const structure_id of structures_ids) {
-		const structureInfo = await getStructureInfo(structure_id);
-
-		if (structureInfo) structures.push({ id: structure_id, structure: structureInfo });
+	for (const structureId of structuresIds) {
+		const structureInfo = await getStructureInfo(structureId);
+		const structureAverageRating = await getAverageRating(structureId);
+		if (structureInfo)
+			structures.push({
+				id: structureId,
+				structure: structureInfo,
+				rating: structureAverageRating
+			});
 	}
 
 	return { structures: structures };
@@ -39,4 +44,15 @@ export async function getBookingsForStructure(structureId: number) {
 		console.log(err);
 	}
 	return [];
+}
+
+export async function getAverageRating(structureId: number) {
+	try {
+		const response = await axios.get(serverURL + `/api/structure/${structureId}/voto_medio/`);
+		return response.data;
+	} catch (err) {
+		console.log('Inside getAverageRating');
+		console.log(err);
+	}
+	return 0;
 }
