@@ -89,6 +89,14 @@
 					<AppRailAnchor href="/modifica-tema" selected={$page.url.pathname === '/modifica-tema'}
 						>Modifica tema del sito</AppRailAnchor
 					>
+					<AppRailAnchor href="/assegna-utenti" selected={$page.url.pathname === '/assegna-utenti'}
+						>Assegna utenti alle strutture</AppRailAnchor
+					>
+					<AppRailAnchor
+						href="/admin-strutture"
+						selected={$page.url.pathname === '/admin-strutture'}
+						>Visualizza admin delle strutture</AppRailAnchor
+					>
 				{/if}
 			</AppRail>
 		{/if}
