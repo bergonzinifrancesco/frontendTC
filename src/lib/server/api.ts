@@ -56,3 +56,32 @@ export async function getAverageRating(structureId: number) {
 	}
 	return 0;
 }
+
+export function createEventsFromBookings(bookings, myInfo, isAdmin = false) {
+	const events = [];
+
+	if (!myInfo || !bookings) {
+		return null;
+	}
+
+	for (const b of bookings) {
+		const isMine = b.prenotante == myInfo.id;
+		const event = {
+			id: events.length,
+			title: isMine ? myInfo.username : 'Altro utente',
+			titleHTML: isMine ? `<b>${myInfo.username}</b>` : '<i>Altro utente<i>',
+			backgroundColor: isMine ? 'blue' : 'red',
+			start: new Date(b.inizio),
+			end: new Date(b.fine),
+			editable: false,
+			num_campo: b.campo
+		};
+		if (isAdmin) {
+			event.title = JSON.stringify(b);
+			event.titleHTML = `<b>Utente con id: ${b.prenotante}</b><br/>Campo n.${b.campo}`;
+			event.editable = new Date() < new Date(event.start) ? true : false;
+		}
+		events.push(event);
+	}
+	return events;
+}

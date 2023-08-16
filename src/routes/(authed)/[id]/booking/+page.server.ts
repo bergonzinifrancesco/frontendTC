@@ -1,4 +1,9 @@
-import { getBookingsForStructure, getStructureInfo, serverURL } from '$lib/server/api';
+import {
+	createEventsFromBookings,
+	getBookingsForStructure,
+	getStructureInfo,
+	serverURL
+} from '$lib/server/api';
 import axios from 'axios';
 
 export async function load({ params, cookies, locals }) {
@@ -21,6 +26,13 @@ export async function load({ params, cookies, locals }) {
 	}
 	try {
 		fields = (await axios.get(serverURL + `/api/structure/${structureId}/info_campi/`)).data;
+		fields.sort((a, b) => {
+			const numCampoA = a.num_campo;
+			const numCampoB = b.num_campo;
+			if (numCampoA > numCampoB) return 1;
+			else if (numCampoA < numCampoB) return -1;
+			return 0;
+		});
 	} catch (err) {
 		console.log(err);
 	}
@@ -43,31 +55,6 @@ export async function load({ params, cookies, locals }) {
 		bookings: createEventsFromBookings(bookings, myInfo),
 		username: cookies.get('username')
 	};
-}
-
-function createEventsFromBookings(bookings, myInfo) {
-	console.log('myInfo', myInfo);
-	const events = [];
-
-	if (!myInfo || !myInfo) {
-		return null;
-	}
-
-	for (const b of bookings) {
-		console.log('b', b);
-		const isMine = b.prenotante == myInfo.id;
-		events.push({
-			id: events.length,
-			title: isMine ? myInfo.username : 'Altro utente',
-			titleHTML: isMine ? `<b>${myInfo.username}</b>` : '<i>Altro utente<i>',
-			backgroundColor: isMine ? 'blue' : 'red',
-			start: new Date(b.inizio),
-			end: new Date(b.fine),
-			editable: false,
-			num_campo: b.campo
-		});
-	}
-	return events;
 }
 
 export const actions = {

@@ -2,7 +2,7 @@ import { getStructureInfo, serverURL } from '$lib/server/api';
 import axios from 'axios';
 
 export async function load({ cookies, locals }) {
-	let ids = locals.structures;
+	const ids = locals.structures;
 	const structures = [];
 	for (const id of ids) {
 		const structure = await getStructureInfo(id);
