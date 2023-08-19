@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export const serverURL = 'http://localhost:8000';
 
-export async function loadStructures() {
-	const response = await axios.get(serverURL + '/api/structure/list_structures/');
+export async function loadStructures(filter = {}) {
+	const response = await axios.post(serverURL + '/api/structure/list_structures/', filter);
 	const structuresIds = response.data;
 
 	const structures = [];

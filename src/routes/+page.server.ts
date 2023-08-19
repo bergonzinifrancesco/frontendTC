@@ -15,6 +15,47 @@ export async function load({ cookies }) {
 }
 
 export const actions = {
+	filter: async function ({ request, locals }) {
+		const data = await request.formData();
+
+		console.log(data);
+
+		let superfici = data.get('superfici');
+		if (superfici) {
+			superfici = JSON.parse(superfici);
+		}
+
+		const costo = data.get('costo');
+
+		const isRated = data.get('isRated');
+
+		const ordine = data.get('ordine');
+
+		let geocords = data.get('geocords');
+		if (geocords) {
+			geocords = JSON.parse(geocords);
+		}
+
+		const filter = new Object();
+		if (superfici.length > 0) {
+			filter.campo = superfici;
+		}
+		if (costo) {
+			filter.costo = costo;
+		}
+		if (isRated) {
+			filter.is_rated = isRated;
+		}
+		if (ordine) {
+			filter.ordine = ordine;
+			if (ordine == 'vicinanza' && geocords) {
+				filter.coordinates = geocords;
+			}
+		}
+		const response = await loadStructures(filter);
+
+		return { structures: response.structures, filter: filter };
+	},
 	vote: async function ({ request, locals }) {
 		let data = (await request.formData()).get('data');
 
