@@ -2,14 +2,17 @@
 	import { enhance } from '$app/forms';
 	import Structure from '$lib/Structure.svelte';
 	import {
+		Autocomplete,
 		Accordion,
 		AccordionItem,
 		ListBox,
 		ListBoxItem,
 		SlideToggle,
-		toastStore
+		toastStore,
+		popup
 	} from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
+
 	export let data;
 	export let form;
 
@@ -58,7 +61,27 @@
 	$: inputSuperfici = superfici ? JSON.stringify(superfici) : JSON.stringify([]);
 	$: inputPosizione = posizione ? JSON.stringify(posizione) : JSON.stringify([]);
 
-	let test = [];
+	let searchResult = '';
+
+	function selectOption(event) {
+		searchResult = event.detail.label;
+	}
+
+	$: allowedStructures = structures.filter((s) => {
+		const nome = s.structure.nome.toLowerCase();
+		const termine = searchResult.toLowerCase();
+		return nome.includes(termine);
+	});
+	$: searchTerms = allowedStructures.map((s) => ({
+		label: s.structure.nome,
+		value: s.structure.nome
+	}));
+
+	let popupSettings = {
+		event: 'focus-click',
+		target: 'popupAutocomplete',
+		placement: 'bottom'
+	};
 </script>
 
 <Accordion>
@@ -118,12 +141,29 @@
 		</svelte:fragment>
 	</AccordionItem>
 </Accordion>
+
 <div class="flex flex-col p-10 gap-10 items-center">
-	{#if structures.length > 0}
-		{#each structures as s}
+	{#if allowedStructures.length > 0}
+		{#each allowedStructures as s}
 			<Structure id={s.id} {...s.structure} rating={s.rating} isLogged={data.isLogged} />
 		{/each}
 	{:else}
 		<h3 class="h3">Non ci sono strutture da mostrare.</h3>
 	{/if}
+</div>
+
+<input
+	class="flex input autocomplete w-1/2 mx-auto"
+	type="search"
+	name="search"
+	bind:value={searchResult}
+	placeholder="Cerca Struttura..."
+	use:popup={popupSettings}
+/>
+<div
+	data-popup="popupAutocomplete"
+	class="card w-full max-w-sm max-h-48 p-4 variant-filled-primary"
+	tabindex="-1"
+>
+	<Autocomplete bind:input={searchResult} options={searchTerms} on:selection={selectOption} />
 </div>
