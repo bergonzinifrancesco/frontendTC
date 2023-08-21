@@ -36,3 +36,8 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+
+## Tecnologie impiegate
+
+Sono tutte visibili nel package.json. La maggior parte del lavoro è stata sviluppata con la libreria di componenti [Skeleton](https://github.com/skeletonlabs/skeleton), realizzata per Svelte e con il supporto out-of-the-box a TailwindCSS.
