@@ -101,6 +101,10 @@
 						selected={$page.url.pathname === '/admin-strutture'}
 						>Visualizza admin delle strutture</AppRailAnchor
 					>
+					<AppRailAnchor
+						href="/rimuovi-struttura"
+						selected={$page.url.pathname === '/rimuovi-struttura'}>Rimuovi struttura</AppRailAnchor
+					>
 				{/if}
 			</AppRail>
 		{/if}

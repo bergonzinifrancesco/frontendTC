@@ -8,6 +8,15 @@ export async function load({ locals }) {
 	const positions: string[] = [];
 	const characteristics: string[] = [];
 
+	let advancedInfo = {
+		peso: 0,
+		altezza: 0,
+		nazionalità: '',
+		bio: '',
+		numero_telefono: '',
+		data_nascita: new Date(1900, 1, 1)
+	};
+
 	try {
 		const avatar = await axios.get(serverURL + '/api/user/me/avatar/', {
 			headers: {
@@ -70,11 +79,24 @@ export async function load({ locals }) {
 		console.log('Caratteristiche non presenti.');
 	}
 
+	try {
+		const response = await axios.get(serverURL + '/api/user/me/info_avanzate/', {
+			headers: {
+				Authorization: `Bearer ${locals.access}`
+			}
+		});
+
+		advancedInfo = response.data;
+	} catch (err) {
+		console.log('Non ci sono info avanzate per questo utente.');
+	}
+
 	return {
 		avatar: avatarPath,
 		positions: positions,
 		basicInfo: basicInfo,
-		characteristics: characteristics
+		characteristics: characteristics,
+		advancedInfo: advancedInfo
 	};
 }
 
@@ -231,10 +253,41 @@ export const actions = {
 					}
 				}
 			);
-			return { changeBasicInfoSuccess: true, first_name: 'Pippo' };
+			return { changeBasicInfoSuccess: true };
 		} catch (error) {
 			console.log(error);
 			return { changeBasicInfoError: 'Impossibile cambiare le info base.' };
+		}
+	},
+
+	changeAdvancedInfo: async function ({ request, locals }) {
+		try {
+			const data = await request.formData();
+			const peso = parseFloat(data.get('peso'));
+			const altezza = parseInt(data.get('altezza'));
+			const dataNascita = data.get('dataNascita');
+			const numeroTelefono = data.get('numeroTelefono');
+			const nazionalità = data.get('nazionalità').toUpperCase();
+			const bio = data.get('bio');
+
+			const payload = {
+				peso: peso,
+				altezza: altezza,
+				data_nascita: dataNascita,
+				bio: bio,
+				nazionalità: nazionalità,
+				numero_telefono: numeroTelefono
+			};
+
+			await axios.put(serverURL + '/api/user/me/info_avanzate/', payload, {
+				headers: {
+					Authorization: `Bearer ${locals.access}`
+				}
+			});
+			return { changeAdvancedInfoSuccess: true };
+		} catch (err) {
+			console.log(err.message);
+			return { changeAdvancedInfoError: 'Errore nella modifica delle informazioni.' };
 		}
 	}
 };

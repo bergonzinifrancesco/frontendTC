@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AboutAdvancedInfo from './AboutAdvancedInfo.svelte';
 	import AboutAvatar from './AboutAvatar.svelte';
 	import AboutBasicInfo from './AboutBasicInfo.svelte';
 	import AboutCaratteristiche from './AboutCaratteristiche.svelte';
@@ -14,6 +15,11 @@
 		{...data.basicInfo}
 		error={form?.changeBasicInfoError}
 		success={form?.changeBasicInfoSuccess}
+	/>
+	<AboutAdvancedInfo
+		{...data.advancedInfo}
+		error={form?.changeAdvancedInfoError}
+		success={form?.changeAdvancedInfoSuccess}
 	/>
 	<AboutAvatar
 		avatarPath={data?.avatar ?? '/user-solid.svg'}

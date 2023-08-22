@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { fade } from 'svelte/transition';
 
 	export let id: Number;

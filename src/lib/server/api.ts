@@ -3,8 +3,7 @@ import axios from 'axios';
 export const serverURL = 'http://localhost:8000';
 
 export async function loadStructures(filter = {}) {
-	const response = await axios.post(serverURL + '/api/structure/list_structures/', filter);
-	const structuresIds = response.data;
+	const structuresIds = await getListOfStructuresById(filter);
 
 	const structures = [];
 
@@ -20,6 +19,10 @@ export async function loadStructures(filter = {}) {
 	}
 
 	return { structures: structures };
+}
+
+export async function getListOfStructuresById(filter = {}) {
+	return (await axios.post(serverURL + '/api/structure/list_structures/', filter)).data;
 }
 
 export async function getStructureInfo(id: number) {
