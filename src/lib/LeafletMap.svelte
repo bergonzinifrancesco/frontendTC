@@ -1,41 +1,41 @@
 <script>
-  // https://svelte.dev/repl/5869cf5ae3b0401baf8b607f7f46caba?version=3.20.1
-  // https://khromov.se/using-leaflet-with-sveltekit/
-  
-  import 'leaflet/dist/leaflet.css';
-  import { onMount, onDestroy } from "svelte";
+	// https://svelte.dev/repl/5869cf5ae3b0401baf8b607f7f46caba?version=3.20.1
+	// https://khromov.se/using-leaflet-with-sveltekit/
 
-  export let lat;
-  export let long;
+	import 'leaflet/dist/leaflet.css';
+	import { onMount, onDestroy } from 'svelte';
 
-  let mapElement;
-  let map;
+	export let lat;
+	export let long;
 
-  const mapOptions = {
-    zoomControl: false,
-    minZoom: 10,
-    maxZoom: 15,
-  };
+	let mapElement;
+	let map;
 
-  onMount(async () => {
-    const L = await import('leaflet');
+	const mapOptions = {
+		zoomControl: false,
+		minZoom: 10,
+		maxZoom: 15
+	};
 
-    map = L.map(mapElement, mapOptions).setView([lat, long], 13);
-    
-    L.tileLayer("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ", {
-      attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-      maxZoom: 18
-    }).addTo(map);
+	onMount(async () => {
+		const L = await import('leaflet');
 
-    L.marker([lat, long]).addTo(map);
-  });
+		map = L.map(mapElement, mapOptions).setView([lat, long], 13);
 
-  onDestroy(async () => {
-    if(map) {
-      map.remove();
-    }
-  });
+		L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
+			attribution:
+				'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+			maxZoom: 18
+		}).addTo(map);
+
+		L.marker([lat, long]).addTo(map);
+	});
+
+	onDestroy(async () => {
+		if (map) {
+			map.remove();
+		}
+	});
 </script>
 
-<div bind:this={mapElement} class="w-full h-full"/>
+<div bind:this={mapElement} class="w-full h-full z-0" />

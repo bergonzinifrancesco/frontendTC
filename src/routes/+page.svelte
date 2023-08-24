@@ -142,16 +142,6 @@
 	</AccordionItem>
 </Accordion>
 
-<div class="flex flex-col p-10 gap-10 items-center">
-	{#if allowedStructures.length > 0}
-		{#each allowedStructures as s}
-			<Structure id={s.id} {...s.structure} rating={s.rating} isLogged={data.isLogged} />
-		{/each}
-	{:else}
-		<h3 class="h3">Non ci sono strutture da mostrare.</h3>
-	{/if}
-</div>
-
 <input
 	class="flex input autocomplete w-1/2 mx-auto"
 	type="search"
@@ -160,10 +150,16 @@
 	placeholder="Cerca Struttura..."
 	use:popup={popupSettings}
 />
-<div
-	data-popup="popupAutocomplete"
-	class="card w-full max-w-sm max-h-48 p-4 variant-filled-primary"
-	tabindex="-1"
->
+<div data-popup="popupAutocomplete" class="card w-full p-4 variant-filled z-10" tabindex="-1">
 	<Autocomplete bind:input={searchResult} options={searchTerms} on:selection={selectOption} />
+</div>
+
+<div class="flex flex-col p-10 gap-10 items-center">
+	{#if allowedStructures.length > 0}
+		{#each allowedStructures as s}
+			<Structure id={s.id} {...s.structure} rating={s.rating} isLogged={data.isLogged} />
+		{/each}
+	{:else}
+		<h3 class="h3">Non ci sono strutture da mostrare.</h3>
+	{/if}
 </div>
