@@ -41,6 +41,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@faker-js/faker": "^8.0.2",
 		"@fullcalendar/core": "^6.1.8",
 		"@fullcalendar/interaction": "^6.1.8",
 		"@fullcalendar/timegrid": "^6.1.8",
