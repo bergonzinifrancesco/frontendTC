@@ -47,7 +47,8 @@ export async function load({ params, cookies, locals }) {
 	} catch (err) {
 		console.log(err);
 	}
-	return {
+
+	const data = {
 		id: params.id,
 		myInfo: myInfo,
 		structure: structureInfo,
@@ -55,6 +56,8 @@ export async function load({ params, cookies, locals }) {
 		bookings: createEventsFromBookings(bookings, myInfo),
 		username: cookies.get('username')
 	};
+
+	return data;
 }
 
 export const actions = {

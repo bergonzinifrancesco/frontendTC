@@ -77,7 +77,7 @@ export function createEventsFromBookings(bookings, myInfo, isAdmin = false) {
 			start: new Date(b.inizio),
 			end: new Date(b.fine),
 			editable: false,
-			num_campo: b.campo
+			campo: b.campo
 		};
 		if (isAdmin) {
 			event.title = JSON.stringify(b);

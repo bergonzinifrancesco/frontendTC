@@ -6,8 +6,6 @@
 	export let data;
 	$: username = data.username;
 
-	let websocket: WebSocket;
-
 	let names: string[] = [];
 
 	onMount(() => {
@@ -20,7 +18,7 @@
 </script>
 
 <div class="flex">
-	<div class="overflow-y-scroll w-1/3 border border-r-8 h-screen">
+	<div class="overflow-auto w-1/3 border border-r-8 h-screen">
 		<ul class="w-full space-y-1">
 			{#each names as name, id}
 				<div>
@@ -45,6 +43,6 @@
 		</ul>
 	</div>
 	<div class="container overflow-auto w-2/3">
-		<Chat {username} />
+		<Chat bind:roomId={selectedRoom} {username} />
 	</div>
 </div>

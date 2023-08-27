@@ -56,8 +56,7 @@
 				console.log("Impossibile aggiungere l'evento", event);
 			} else {
 				calendar.addEvent(event);
-				bookings.push(event);
-				bookings = [...bookings];
+				bookings = [...bookings, event];
 				newEvents = [...newEvents, event];
 				console.log('nuovo evento aggiunto');
 				console.log('newEvents', newEvents);
@@ -83,9 +82,17 @@
 	};
 
 	function validateEvent(event, events) {
+		console.log('inside validateEvent');
+		console.log('events', events);
 		console.log('event', event);
 		const hourInMs = 1000 * 60 * 60;
 		const duration = event.end - event.start;
+
+		const now = new Date();
+		if (event.start.getTime() < now.getTime()) {
+			console.log('Prenotazione antecedente ad oggi.');
+			return false;
+		}
 
 		if (duration < hourInMs) {
 			console.log('Prenotazione più breve di 1 ora.');
@@ -127,7 +134,6 @@
 		calendar.removeEventById(lastEvent.id);
 		return true;
 	}
-	$: console.log('bookings', bookings);
 </script>
 
 <div class="flex container flex-col bg-white p-10">

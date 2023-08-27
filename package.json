@@ -52,6 +52,7 @@
 		"@zxcvbn-ts/language-it": "^3.0.1",
 		"axios": "^1.4.0",
 		"country-list": "^2.3.0",
+		"date-fns": "^2.30.0",
 		"dotenv": "^16.3.1",
 		"intl-tel-input": "^18.2.1",
 		"irc": "^0.5.2",

@@ -18,9 +18,9 @@
 		settings.offset * settings.limit + settings.limit
 	)[0];
 
-	$: actualBookings = data?.bookings.filter(
-		(booking) => booking.num_campo == actualField.num_campo
-	);
+	$: actualBookings = data?.bookings.filter((booking) => {
+		return booking.campo == actualField.id;
+	});
 
 	$: costoCampo = actualField ? Number(actualField.costo_orario) : 0;
 </script>
