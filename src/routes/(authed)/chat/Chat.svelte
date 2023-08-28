@@ -1,15 +1,44 @@
 <script lang="ts">
 	import formatRelative from 'date-fns/formatRelative';
 	import { it } from 'date-fns/locale';
+	import type { Message } from './+page.server';
+	import { afterUpdate } from 'svelte';
 
 	export let username: string;
 	export let roomId: number;
+	export let messages: Message[] = [];
 
-	interface Message {
-		room: number;
-		username: string;
-		message: string;
-		time: Date;
+	let websocket: WebSocket;
+	let currentMessage = '';
+	let chatElement: HTMLElement;
+	const scrollToBottom = async (element: HTMLElement): Promise<void> => {
+		return element.scrollIntoView({ behavior: 'smooth' });
+	};
+
+	afterUpdate(() => {
+		console.log('Aggiornamento interfaccia.');
+		if (chatElement) {
+			console.log(chatElement.scrollTop);
+			console.log('scrolling chat block');
+			scrollToBottom(chatElement);
+		}
+	});
+
+	$: roomMessages = messages
+		.filter((msg) => {
+			return msg.room == roomId;
+		})
+		.sort((a, b) => {
+			return a.time.getTime() - b.time.getTime();
+		});
+
+	$: {
+		if (websocket) {
+			websocket.close();
+		}
+		if (roomId >= 0) {
+			websocket = openConnection(roomId, username);
+		}
 	}
 
 	const formatRelativeLocale = {
@@ -26,33 +55,11 @@
 		formatRelative: (token) => formatRelativeLocale[token]
 	};
 
-	let websocket: WebSocket;
-	let messages: Message[] = [
-		{
-			message: 'Ciaooo sono un pirla',
-			username: 'nicolo',
-			room: 0,
-			time: new Date(2023, 7, 10, 15, 0)
-		},
-		{
-			message: 'Ciaooooooooooooooooooooooooooooooooooooooooooooooooooooooooo',
-			username: 'francesco',
-			room: 0,
-			time: new Date(2023, 7, 25, 18, 0)
-		}
-	];
+	function sendMessage() {
+		console.log('Inside sendMessage');
+		console.log('currentMessage', currentMessage);
+		console.log('websocket', websocket);
 
-	$: roomMessages = messages
-		.filter((msg) => {
-			return msg.room == roomId;
-		})
-		.sort((a, b) => {
-			return a.time.getTime() - b.time.getTime();
-		});
-
-	let currentMessage = '';
-
-	function testMessaggio() {
 		if (websocket && currentMessage) {
 			websocket.send(JSON.stringify({ message: currentMessage }));
 			currentMessage = '';
@@ -82,41 +89,31 @@
 		return ws;
 	}
 
-	$: {
-		if (websocket) {
-			websocket.close();
-		}
-		websocket = openConnection(roomId, username);
-	}
-	$: console.log('roomMessages', roomMessages);
-	$: console.log('messages', messages);
+	const formatDate = function (time: Date, reference: Date) {
+		return formatRelative(time, reference, {
+			weekStartsOn: 1, // lunedì
+			locale: customLocale
+		});
+	};
 
 	function getDayLabel(a: Message | undefined, b: Message | undefined): string {
 		if (!a || !b) {
 			return '';
 		}
-
 		const aTime = a.time.getTime();
-
 		const nextAMidnight = new Date(aTime).setHours(24, 0, 0, 0); // prossima mezzanotte
-
 		const bTime = b.time.getTime();
 
 		const now = new Date();
 		if (aTime > bTime || nextAMidnight > bTime || bTime > now.getTime()) {
 			return '';
 		}
-
-		return formatRelative(b.time, now, {
-			weekStartsOn: 1, // lunedì
-			locale: customLocale
-		});
+		return formatDate(b.time, now);
 	}
 </script>
 
 <div class="flex w-full flex-col p-4">
 	{#if messages}
-		<p>Messaggi ricevuti finora:</p>
 		<ul class="flex gap-6 flex-col overflow-x-hidden">
 			{#each roomMessages as message, index}
 				{#if index > 0 && getDayLabel(roomMessages.at(index - 1), message)}
@@ -126,7 +123,9 @@
 							: message.time.toLocaleDateString()}
 					</p>
 				{:else if index == 0}
-					<p class="card p-4 mx-auto">{message.time.toLocaleDateString()}</p>
+					<p class="card p-4 mx-auto">
+						{formatDate(message.time, new Date())}
+					</p>
 				{/if}
 				<li
 					class={'card pt-4 px-4 pb-2 max-w-sm text-left' +
@@ -149,6 +148,7 @@
 				</li>
 			{/each}
 		</ul>
+		<div class="p-4" bind:this={chatElement} />
 	{/if}
 </div>
 <div
@@ -159,16 +159,9 @@
 		class="bg-transparent border-0 ring-0 w-full"
 		placeholder="Scrivi un messaggio..."
 		rows={1}
-		on:keyup={(e) => {
-			if (e.key == 'Enter') {
-				currentMessage = currentMessage.replace('\n', '');
-				testMessaggio();
-				return;
-			}
-		}}
 	/>
 	<div class="container w-12 variant-filled-primary">
-		<button on:click={testMessaggio()} disabled={!currentMessage}>
+		<button type="button" on:click={sendMessage} disabled={!currentMessage}>
 			<i class="fa-regular fa-paper-plane" />
 		</button>
 	</div>

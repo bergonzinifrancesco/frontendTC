@@ -110,7 +110,7 @@
 		{/if}
 	</svelte:fragment>
 
-	<div class="h-full w-full">
+	<div class="w-full h-full">
 		<slot />
 	</div>
 </AppShell>
