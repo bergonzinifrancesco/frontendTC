@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { serverURL } from '$lib/server/api';
 import { fail } from '@sveltejs/kit';
+import differenceInCalendarYears from 'date-fns/differenceInCalendarYears';
 
 export async function load({ locals }) {
 	let avatarPath = '';
@@ -104,7 +105,7 @@ export const actions = {
 	uploadAvatar: async function ({ request, locals }) {
 		const data = await request.formData();
 
-		const fileSize = data.get('fileSize');
+		const fileSize = parseInt(data.get('fileSize'));
 		const avatarFile = data.get('file');
 
 		const { size, type } = avatarFile;
@@ -116,16 +117,17 @@ export const actions = {
 		}
 
 		try {
-			await axios.put(serverURL + '/api/user/me/avatar/', data, {
+			await axios.post(serverURL + '/api/user/me/avatar/', data, {
 				headers: {
 					Authorization: `Bearer ${locals.access}`
 				},
 				maxBodyLength: Infinity,
 				maxContentLength: Infinity
 			});
+			console.log('Caricamento avvenuto con successo.');
 			return { avatarSuccess: true };
 		} catch (error) {
-			console.log("Errore nel caricamento dell'avatar.");
+			console.log(error);
 			return { avatarError: 'Errore inaspettato.' };
 		}
 	},
@@ -270,14 +272,22 @@ export const actions = {
 			const nazionalità = data.get('nazionalità').toUpperCase();
 			const bio = data.get('bio');
 
+			const offsetAnni = differenceInCalendarYears(new Date(), new Date(dataNascita));
+
 			const payload = {
 				peso: peso,
 				altezza: altezza,
-				data_nascita: dataNascita,
 				bio: bio,
 				nazionalità: nazionalità,
 				numero_telefono: numeroTelefono
 			};
+
+			// età minima
+			if (dataNascita && offsetAnni > 13) {
+				payload.data_nascita = dataNascita;
+			} else {
+				return { changeAdvancedInfoError: 'Età minima: 13 anni.' };
+			}
 
 			await axios.put(serverURL + '/api/user/me/info_avanzate/', payload, {
 				headers: {

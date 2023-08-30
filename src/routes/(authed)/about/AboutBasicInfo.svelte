@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 
 	export let id: Number;
+	export let username: string;
 	export let first_name: string;
 	export let last_name: string;
 	export let email: string;
@@ -20,6 +21,11 @@
 				<span>Id</span>
 				<input name="id" type="number" bind:value={id} class="input p-2" disabled />
 			</label>
+			<label>
+				<span>Username</span>
+				<input name="username" type="text" bind:value={username} class="input p-2" disabled />
+			</label>
+
 			<label class="label">
 				<span>Email</span>
 				<input name="email" type="string" bind:value={email} class="input p-2" />

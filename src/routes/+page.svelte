@@ -143,9 +143,10 @@
 </Accordion>
 
 <input
-	class="flex input autocomplete w-1/2 mx-auto"
+	class="flex input w-1/2 mx-auto"
 	type="search"
 	name="search"
+	autocomplete="off"
 	bind:value={searchResult}
 	placeholder="Cerca Struttura..."
 	use:popup={popupSettings}
