@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { serverURL } from '$lib/server/api';
 import { fail } from '@sveltejs/kit';
-import differenceInCalendarYears from 'date-fns/differenceInCalendarYears';
+import differenceInCalendarYears from 'date-fns/differenceInCalendarYears/index.js';
 
 export async function load({ locals }) {
 	let avatarPath = '';
